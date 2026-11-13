@@ -46,7 +46,6 @@ get_wows <- function() {
 for(i in 1:100) {
   details <- get_wows()
   
->>>>>>> part3_project2
   for(j in 1:length(details)) {
     wow <- bind_rows(wow, tibble(
       movie = details[[j]]$movie,
