@@ -52,7 +52,7 @@ for(i in 1:100) {
 wow <- wow |>
   distinct(full_line, timestamp, movie, .keep_all = TRUE)
 
-wow
+write_csv(wow, "wows.csv")
 
 ```
 
