@@ -1,0 +1,58 @@
+---
+title: "Mini Project 3 Part 2"
+format: html
+---
+```{r}
+#| include: FALSE
+
+library(tidyverse)
+library(stringr)
+library(httr2)
+library(httr)
+library(tidycensus)
+```
+
+
+```{r}
+wow <- tibble(
+  movie = character(), 
+  year = integer(), 
+  release_date = character(),
+  director = character(), 
+  movie_duration = character(), 
+  timestamp = character(),
+  full_line = character(),
+  current_wow_in_movie = double(),
+  total_wows_in_movie = double(),
+  video = list()
+)
+
+for(i in 1:100) {
+  url <- str_c("https://owen-wilson-wow-api.onrender.com/wows/random?results=100")
+  Sys.sleep(0.5)
+  onemovie <- GET(url)
+  details <- content(onemovie, "parsed")
+  
+  for(j in 1:length(details)) {
+    wow <- bind_rows(wow, tibble(
+      movie = details[[j]]$movie,
+      year = details[[j]]$year,
+      release_date = details[[j]]$release_date,
+      director = details[[j]]$director,
+      movie_duration = details[[j]]$movie_duration,
+      timestamp = details[[j]]$timestamp,
+      full_line = details[[j]]$full_line,
+      current_wow_in_movie = as.numeric(details[[j]]$current_wow_in_movie),
+      total_wows_in_movie = as.numeric(details[[j]]$total_wows_in_movie),
+      video = list(details[[j]]$video)
+    ))
+  }
+}
+
+wow <- wow |>
+  distinct(full_line, timestamp, movie, .keep_all = TRUE)
+
+write_csv(wow, "wows.csv")
+
+```
+
